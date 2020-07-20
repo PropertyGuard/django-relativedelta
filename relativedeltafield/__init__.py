@@ -25,6 +25,12 @@ iso8601_duration_re = re.compile(
     r'$'
 )
 
+
+class customrelativedelta(relativedelta):
+	def __str__(self):
+		return format_relativedelta(self)
+
+
 # Parse ISO8601 timespec
 def parse_relativedelta(str):
 	m = iso8601_duration_re.match(str)
@@ -37,7 +43,7 @@ def parse_relativedelta(str):
 				args[k] = float(v)
 			else:
 				args[k] = int(v)
-		return relativedelta(**args).normalized() if m else None
+		return customrelativedelta(**args).normalized() if m else None
 
 	raise ValueError('Not a valid (extended) ISO8601 interval specification')
 
@@ -102,7 +108,7 @@ class RelativeDeltaField(models.Field):
 		elif isinstance(value, relativedelta):
 			return value.normalized()
 		elif isinstance(value, timedelta):
-			return (relativedelta() + value).normalized()
+			return (customrelativedelta() + value).normalized()
 
 		try:
 			return parse_relativedelta(value)
