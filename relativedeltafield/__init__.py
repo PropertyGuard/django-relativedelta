@@ -103,8 +103,8 @@ class RelativeDeltaField(models.Field):
 
 
 	def to_python(self, value):
-		if value is None:
-			return value
+		if not value:
+			return None
 		elif isinstance(value, relativedelta):
 			return value.normalized()
 		elif isinstance(value, timedelta):
@@ -121,8 +121,8 @@ class RelativeDeltaField(models.Field):
 
 
 	def get_db_prep_value(self, value, connection, prepared=False):
-		if value is None:
-			return value
+		if not value:
+			return None
 		else:
 			return format_relativedelta(self.to_python(value))
 
